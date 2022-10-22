@@ -1,5 +1,8 @@
+from datetime import datetime
+
+from django.db.models import Q
 from rest_framework import serializers, permissions
-from shopApp.models import Product, Price
+from shopApp.models import Product, Price, StockProduct
 from django.contrib.auth.models import User
 
 
@@ -32,16 +35,15 @@ class PriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Price
-        fields = ['price']
+        fields = ['product', 'price']
 
 
 class ProductSerializer(serializers.ModelSerializer):
 
     # price = PriceSerializer()
-
     class Meta:
         model = Product
-        fields = ['name', 'article', 'count', 'created', 'author']
+        fields = ['name', 'article', 'description', 'created', 'author']
         read_only_fields = ['created', 'author']
 
 
@@ -53,6 +55,52 @@ class ProductPermission(permissions.BasePermission):
 
         return obj.author == request.user or request.user.is_superuser
 
+
+class ProductDetailsViewSerializer(serializers.ModelSerializer):
+
+    stock_product = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['name', 'article', 'description', 'created', 'author', 'stock_product']
+        read_only_fields = ['created', 'author']
+
+    def to_representation(self, instance: Product):
+        ret = super().to_representation(instance)
+        try:
+            query = Q(product=instance)
+
+            date = self.context.get('request').query_params.get('date')
+            if date:
+                try:
+                    date = datetime.strptime(date, '%Y-%m-%d')
+                    query &= Q(created__lte=date)
+                except:
+                    pass
+
+            price_queryset = Price.objects.filter(query).order_by('-created').first()
+            price = price_queryset.price
+        except:
+            price = 0
+
+        ret['price'] = price
+        return ret
+
+
+class StockProductSerializer(serializers.ModelSerializer):
+
+    product = serializers.CharField(source='product.name')
+
+    class Meta:
+        model = StockProduct
+        fields = ['stock', 'product', 'count']
+
+#
+# class StockProductSerializerCreate(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = StockProduct
+#         fields = ['stock', 'product', 'count']
 
 
 

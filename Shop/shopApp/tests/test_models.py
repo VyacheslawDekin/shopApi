@@ -16,7 +16,6 @@ class ProductTest(TestCase):
         models.Product.objects.create(
             name='Name',
             article='09235',
-            count=34,
             author=user
         )
 

@@ -8,6 +8,10 @@ urlpatterns = [
     path('products', views.ProductListCreateAPIView.as_view()),
     path('products/<str:article>', views.ProductRetrieveUpdateDestroyAPIView.as_view()),
 
+
+    path('stock_products', views.StockProductListCreateAPIView.as_view()),
+    path('stock_products/<int:pk>', views.StockProductRetrieveUpdateDestroyAPIView.as_view()),
+
     path('users', views.UserListCreateAPIView.as_view()),
     path('users/<str:username>', views.UserRetrieveUpdateDestroyAPIView.as_view()),
 

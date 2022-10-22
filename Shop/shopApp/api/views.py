@@ -1,14 +1,18 @@
 from datetime import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from .serializers import ProductSerializer, UsersSerializer, UserCreateSerializer, ProductPermission, UserPermission
-from shopApp.models import Product, Price
+from rest_framework.decorators import api_view
+from rest_framework.views import Response, status
+
+from .serializers import ProductSerializer, UsersSerializer, UserCreateSerializer, ProductPermission, UserPermission, ProductDetailsViewSerializer, StockProductSerializer
+from shopApp.models import Product, Price, StockProduct
 from django.db.models import Q
 from django.contrib.auth.models import User
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
-    serializer_class = ProductSerializer
+    serializer_class = ProductDetailsViewSerializer
     queryset = Product.objects.all()
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # authentication_classes = [TokenAuthentication]
@@ -18,14 +22,6 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         query = Q()
-
-        if self.request.GET.get("date"):
-            date = self.request.GET.get("date")
-            date = datetime.strptime(date, '%Y-%m-%d')
-
-            # price = Price.objects.filter(created__lte=date)
-
-            query = Q(price__created__lte=date)
 
         if self.request.GET.get("article"):
             article = self.request.GET.get("article")
@@ -43,6 +39,12 @@ class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 
     lookup_field = 'article'
     lookup_url_kwarg = 'article'
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ProductDetailsViewSerializer
+
+        return ProductSerializer
 
 
 class UserListCreateAPIView(generics.ListCreateAPIView):
@@ -63,6 +65,30 @@ class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     lookup_field = 'username'
     lookup_url_kwarg = 'username'
+
+
+class StockProductListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = StockProductSerializer
+    queryset = StockProduct.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        article = self.request.POST.get('product')
+        product = get_object_or_404(Product, article=article)
+
+        serializer.save(product=product)
+
+class StockProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = StockProductSerializer
+    queryset = StockProduct.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+
+
+
+
+
 
 
 

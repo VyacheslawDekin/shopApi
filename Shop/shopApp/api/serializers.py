@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from django.db.models import Q
-from rest_framework import serializers, permissions
+from rest_framework import serializers, permissions, status
+from rest_framework.response import Response
+
 from shopApp.models import Product, Price, StockProduct
 from django.contrib.auth.models import User
 
@@ -75,8 +77,8 @@ class ProductDetailsViewSerializer(serializers.ModelSerializer):
                 try:
                     date = datetime.strptime(date, '%Y-%m-%d')
                     query &= Q(created__lte=date)
-                except:
-                    pass
+                except Exception:
+                    return Response(data='invalid date format', status=status.HTTP_400_BAD_REQUEST)
 
             price_queryset = Price.objects.filter(query).order_by('-created').first()
             price = price_queryset.price

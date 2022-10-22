@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: usershop
+      POSTGRES_DB: shop #DB name
+#    env_file:
+#      - file.env
+
+  django:
+    build: .
+    image: django_project:v1
+    command: gunicorn --bind 0.0.0.0:8000 shop.wsgi:application
+
+    ports:
+      - "8080:8000"
+
+
+

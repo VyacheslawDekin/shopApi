@@ -36,7 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
 
-    list_display = ['product', 'price']
+    list_display = ['product', 'price', 'created']
     search_fields = ['product', 'price']
 
     ordering = ['product']

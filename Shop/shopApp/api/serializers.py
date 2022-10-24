@@ -60,12 +60,12 @@ class ProductPermission(permissions.BasePermission):
 
 class ProductDetailsViewSerializer(serializers.ModelSerializer):
 
-    stock_product = serializers.StringRelatedField(many=True)
+    stock_product = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = ['name', 'article', 'description', 'width', 'height', 'weight', 'created', 'author', 'stock_product']
-        read_only_fields = ['created', 'author', 'width', 'height', 'weight']
+        read_only_fields = ['created', 'author', 'width', 'height', 'weight', 'stock_product']
 
     def to_representation(self, instance: Product):
         ret = super().to_representation(instance)

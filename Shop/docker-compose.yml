@@ -1,23 +1,31 @@
 version: "3"
 
 services:
+  web:
+    build: .
+    image: django_project:v1
+    command: gunicorn --bind 0.0.0.0:8000 shop.wsgi:application
+    ports:
+      - "8080:8000"
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
 
-  postgres:
+  db:
     image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: usershop
       POSTGRES_DB: shop #DB name
-#    env_file:
-#      - file.env
 
-  django:
-    build: .
-    image: django_project:v1
-    command: gunicorn --bind 0.0.0.0:8000 shop.wsgi:application
+#  django-migration:
+#    image: django_project:v1
+#    command: python manage.py migrate
 
-    ports:
-      - "8080:8000"
-
+volumes:
+  postgres_data:
 
 

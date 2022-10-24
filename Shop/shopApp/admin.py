@@ -16,8 +16,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['article']
 
     fieldsets = (
-        ('Заголовок, артикул, содержимое', {'fields': ['article', 'name', 'description']}),
-        ('Автор, дата создания', {'fields': ['author', 'created']}),
+        ('article, name, description', {'fields': ['article', 'name', 'description']}),
+        ('width, height, weight', {'fields': ['width', 'height', 'weight']}),
+        ('author, created', {'fields': ['author', 'created']}),
     )
 
     readonly_fields = ['created']

@@ -45,7 +45,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # price = PriceSerializer()
     class Meta:
         model = Product
-        fields = ['name', 'article', 'description', 'created', 'author']
+        fields = ['name', 'article', 'description', 'width', 'height', 'weight', 'created', 'author']
         read_only_fields = ['created', 'author']
 
 
@@ -64,8 +64,8 @@ class ProductDetailsViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['name', 'article', 'description', 'created', 'author', 'stock_product']
-        read_only_fields = ['created', 'author']
+        fields = ['name', 'article', 'description', 'width', 'height', 'weight', 'created', 'author', 'stock_product']
+        read_only_fields = ['created', 'author', 'width', 'height', 'weight']
 
     def to_representation(self, instance: Product):
         ret = super().to_representation(instance)

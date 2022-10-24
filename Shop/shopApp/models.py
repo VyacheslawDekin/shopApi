@@ -6,6 +6,9 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=False)
     article = models.CharField(max_length=11, null=False)
     description = models.CharField(max_length=500, blank=True)
+    width = models.DecimalField(max_digits=15, decimal_places=3, blank=True)
+    height = models.DecimalField(max_digits=15, decimal_places=3, blank=True)
+    weight = models.DecimalField(max_digits=15, decimal_places=3, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
